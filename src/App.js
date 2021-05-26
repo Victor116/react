@@ -29,13 +29,6 @@ const App = () => {
     setLoading(false)
   }
 
-  // const getPaginate = pageNumber => {
-  //   console.log(pageNumber, 'Page number ')
-  //   console.log(currentPage, 'Antes  de ')
-  //   setCurrentPage(pageNumber)
-  //   console.log(currentPage, 'Despues de ')
-  //   fetchCharacters()
-  // }
   const getPaginate = pageNumber => {
     setCurrentPage( pageNumber )
   }
