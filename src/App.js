@@ -1,85 +1,64 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Link } from 'react-router-dom';
-import './App.css';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import Characters from './components/Characters';
 
-const apiUrl = 'https://rickandmortyapi.com/api/'
+const apiUrl = 'https://rickandmortyapi.com/api'
 
-class App extends Component {
+const App = () => {
 
-  state = {
-    data: [],
-    page: 1,
-    next: '',
-    prev: ''
-  }
+  const [characters, setCharacters] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [charactersPerPage, setCharactersPerPage] = useState(20)
+  const [next, setNext] = useState('')
+  const [prev, setPrev] = useState('')
 
-  GetCharacters = () => {
-    axios.get(apiUrl+`/character/?page=${this.state.page}`).then(
-      response => {
-        this.setState({ data: response.data.results })
-        this.setState({ next: response.data.info.next })
-        this.setState({ prev: response.data.info.prev })
-      }
-    )
-  }
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      setLoading(true)
+      axios.get(apiUrl+`/character/?page=${currentPage}`).then(
+        response => {
+          setCharacters(response.data.results)
+          setNext(response.data.info.next)
+          setPrev(response.data.info.prev)
+        }
+      )
+      setLoading(false)
+    }
 
-  GetPage = (number) => {
-    this.setState({ page: this.state.page + number })
-    this.GetCharacters()
-    window.scrollTo(0, 0)
-  }
+    fetchCharacters()
+  }, [])
 
-  componentDidMount () {
-    this.GetCharacters()
-    window.scrollTo(0, 0)
-  }
+  const indexOfLastPost = currentPage * charactersPerPage
+  const indexOfFirstPost = indexOfLastPost - charactersPerPage
+  const currentCharacter = characters.slice(indexOfFirstPost, indexOfLastPost)
 
-  render () {
-    return (
-      <div className=''>
-        <section className='container'>
-          <div className='row justify-content-md-center'>
-            { this.state.data.map( character => {
-              return (
-                <div className='col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-3 mb-3'>
-                  <div className='card'>
-                    <img src={`${character.image}`} className='card-img-top' alt='...' />
-                    <div className='card-body'>
-                      <h5 className='card-title'>{ character.name }</h5>
-                      <p className='card-text'>Origen: { character.origin.name }</p>
-                      <p className='card-text'>Genero: { character.gender }</p>
-                      <a href={`/persoanjes/${character.id}`} className='btn btn-primary'>Mas información</a>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+  return (
+    <div className=''>
+      <section className='container'>
+        <Characters characters={currentCharacter} loading={loading} />
 
-          <div className='row justify-content-md-center'>
-            <p className='card-text'>Genero: { this.state.prev }</p>
-            <p className='card-text'>Genero: { this.state.next }</p>
-            <p className='card-text'>Pagina: { this.state.page }</p>
-            <nav aria-label='Page navigation example'>
-              <ul className='pagination justify-content-center'>
-                <li className={'page-item ' + (this.state.prev ? '' : 'disabled')}>
-                  <button className='page-link' onClick={()=> this.GetPage(-1)}>Anterior</button>
-                </li>
-                <li className='page-item'><a className='page-link'>{ this.state.page - 1 }</a></li>
-                <li className='page-item'><a className='page-link'>{ this.state.page }</a></li>
-                <li className='page-item'><a className='page-link'>{ this.state.page + 1 }</a></li>
-                <li className={'page-item' + (this.state.next ? '' : 'disabled')}>
-                  <button className='page-link' onClick={()=> this.GetPage(1)}>Siguiente</button>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </section>
-      </div>
-    );
-  }
+        <div className='row justify-content-md-center'>
+          <nav aria-label='Page navigation example'>
+            <ul className='pagination justify-content-center'>
+              <li className={'page-item ' + (prev ? '' : 'disabled')}>
+                <button className='page-link' onClick={()=>(1)}>Anterior</button>
+              </li>
+              <li className='page-item'><a className='page-link'>{ currentPage - 1 }</a></li>
+              <li className='page-item'><a className='page-link'>{ currentPage }</a></li>
+              <li className='page-item'><a className='page-link'>{ currentPage + 1 }</a></li>
+              <li className={'page-item' + (next ? '' : 'disabled')}>
+                <button className='page-link' onClick={()=>(1)}>Siguiente</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export default App;
