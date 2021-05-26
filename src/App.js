@@ -18,22 +18,26 @@ const App = () => {
 
   useEffect(() => {
     fetchCharacters()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage])
 
   const fetchCharacters = async () => {
     setLoading(true)
-    axios.get(apiUrl+`/character/?page=${currentPage}`).then(
-      response => {
-        setCharacters(response.data.results)
-        setTotalCharacters(response.data.info.count)
-      }
-    )
+    const response = await axios.get(apiUrl+`/character/?page=${currentPage}`)
+    setCharacters(response.data.results)
+    setTotalCharacters(response.data.info.count)
     setLoading(false)
   }
 
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber)
-    fetchCharacters()
+  // const getPaginate = pageNumber => {
+  //   console.log(pageNumber, 'Page number ')
+  //   console.log(currentPage, 'Antes  de ')
+  //   setCurrentPage(pageNumber)
+  //   console.log(currentPage, 'Despues de ')
+  //   fetchCharacters()
+  // }
+  const getPaginate = pageNumber => {
+    setCurrentPage( pageNumber )
   }
 
   return (
@@ -42,7 +46,7 @@ const App = () => {
         <Characters characters={characters} loading={loading} />
         { currentPage }
 
-        <Pagination charactersPerPage={charactersPerPage} totalCharacters={totalCharacters} paginate={paginate} />
+        <Pagination charactersPerPage={charactersPerPage} totalCharacters={totalCharacters} paginate={getPaginate} />
       </section>
     </div>
   );

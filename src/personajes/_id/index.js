@@ -1,17 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const { id } = useParams()
 const apiUrl = "https://rickandmortyapi.com/api/character/?id=" + id
 
-class CharacterId extends Component {
+const CharacterId = () => {
 
-  state = {
-    data: []
-  }
-
-  GetCharacters = () => {
+  const GetCharacters = () => {
     axios.get(apiUrl).then(
       response => {
         console.log(response.data)
@@ -20,25 +16,15 @@ class CharacterId extends Component {
     )
   }
 
-  componentDidMount () {
-    this.GetCharacters()
-  }
-
-  render(){
-    return (
-      <div className="CharacterId">
-        <section className="container">
-          <div className="row justify-content-md-center">
-            { this.state.data.map( character => {
-              return (
-                { character }
-              )
-            })}
-          </div>
-        </section>
-      </div>
-    );
-  }
+  return (
+    <div className="CharacterId">
+      <section className="container">
+        <div className="row justify-content-md-center">
+          hola
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export default CharacterId;
